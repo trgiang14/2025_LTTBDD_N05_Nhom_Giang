@@ -1,3 +1,4 @@
+import 'package:flow_up/widgets/player_controls.dart';
 import 'package:flutter/material.dart';
 import '/widgets/song_progress_bar.dart';
 
@@ -65,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 32),
 
             //Nút điều khiển
+            const PlayerControls(),
           ],
         ),
       ),
