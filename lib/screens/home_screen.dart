@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/widgets/song_progress_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,6 +48,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 24),
+            //Tên bài hát+ca sĩ
+            const Text(
+              'Night Changes',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'One Dỉrection',
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+            ),
+            const SizedBox(height: 32),
+            //Thanh tiến trình
+            const SongProgressBar(current: 60, total: 180),
+            const SizedBox(height: 32),
+
+            //Nút điều khiển
           ],
         ),
       ),
