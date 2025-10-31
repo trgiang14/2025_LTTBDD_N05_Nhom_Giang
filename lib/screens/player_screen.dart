@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '/widgets/song_progress_bar.dart';
 
 class PlayerScreen extends StatefulWidget {
-  const PlayerScreen({super.key});
+  final List<Map<String, dynamic>>? song;
+
+  const PlayerScreen({super.key, this.song});
 
   @override
   State<PlayerScreen> createState() => _PlayerScreenState();
@@ -18,11 +20,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
         backgroundColor: Colors.deepPurple.shade100,
         elevation: 0,
         title: const Text(
-          'Flow Music',
+          'Flow Up Music Player',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),

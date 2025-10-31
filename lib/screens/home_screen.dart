@@ -1,3 +1,4 @@
+import 'package:flow_up/screens/player_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -83,81 +84,88 @@ class HomeScreen extends StatelessWidget {
             //Danh sách bài hát
             Column(
               children: songs.map((song) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.deepPurple.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlayerScreen(song: songs),
                       ),
-                    ],
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(12),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        song["image"],
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    title: Text(
-                      song["title"],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${song["artist"]}'),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: Colors.orange,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 4),
-                            Text('${song["rating"]}'),
-                            const SizedBox(width: 10),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple.shade100,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${song["tag"]}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.deepPurple,
-                                ),
-                              ),
-                            ),
-                          ],
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.deepPurple.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    trailing: Icon(
-                      Icons.play_arrow,
-                      color: Colors.deepPurple.shade400,
-                      size: 28,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          song["image"],
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      title: Text(
+                        song["title"],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${song["artist"]}'),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              Text('${song["rating"]}'),
+                              const SizedBox(width: 10),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.deepPurple.shade100,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  '${song["tag"]}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.deepPurple,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      trailing: Icon(
+                        Icons.play_arrow,
+                        color: Colors.deepPurple.shade400,
+                        size: 28,
+                      ),
                     ),
-                    onTap: () {
-                      //chuyển đến PlayerScreen khi nhấn vào bài hát
-                    },
                   ),
                 );
               }).toList(),
