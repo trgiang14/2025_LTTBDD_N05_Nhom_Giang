@@ -28,7 +28,7 @@ class _FlowAppState extends State<FlowApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Flow Up",
+      title: "Flow Up Music Player",
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
