@@ -1,9 +1,15 @@
 import 'package:flow_up/screens/player_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flow_up/lang.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> songs = [
@@ -39,16 +45,30 @@ class HomeScreen extends StatelessWidget {
           "Flow Up Music Player ",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          DropdownButton(
+            value: currentLanguage,
+            items: const [
+              DropdownMenuItem(value: "en", child: Text("EN")),
+              DropdownMenuItem(value: "vi", child: Text("VI")),
+            ],
+            onChanged: (String? name) {
+              setState(() {
+                currentLanguage = name ?? "en";
+              });
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: ListView(
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Text(
-                "Popular Songs",
+                lang("popular_songs", "Popular Songs"),
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -71,11 +91,23 @@ class HomeScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: _buildTag("New", Colors.orange.shade200)),
+                Expanded(
+                  child: _buildTag(lang("new", "New"), Colors.orange.shade200),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildTag("Popular", Colors.pink.shade200)),
+                Expanded(
+                  child: _buildTag(
+                    lang("popular", "Popular"),
+                    Colors.pink.shade200,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: _buildTag("Trending", Colors.blue.shade200)),
+                Expanded(
+                  child: _buildTag(
+                    lang("trending", "Trending"),
+                    Colors.blue.shade200,
+                  ),
+                ),
                 const SizedBox(width: 8),
               ],
             ),

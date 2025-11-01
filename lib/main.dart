@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/player_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/about_screen.dart';
+import 'package:flow_up/lang.dart';
 
 void main() {
   runApp(FlowApp());
@@ -29,11 +30,6 @@ class _FlowAppState extends State<FlowApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Flow Up Music Player",
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.blue,
-      ),
-      darkTheme: ThemeData.dark(),
       home: Scaffold(
         body: _screen[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
@@ -43,15 +39,18 @@ class _FlowAppState extends State<FlowApp> {
               _selectedIndex = index;
             });
           },
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: lang("home", "Home"),
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.music_note),
-              label: 'Player',
+              label: lang("player", "Player"),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.info_outline),
-              label: 'About',
+              label: lang("about", "About"),
             ),
           ],
         ),

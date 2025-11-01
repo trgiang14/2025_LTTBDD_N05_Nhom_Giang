@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flow_up/lang.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -33,24 +34,26 @@ class AboutScreen extends StatelessWidget {
 
                 // Tên
                 const Text(
-                  'Trần Thu Giang',
+                  'Trần Thị Thu Giang',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
 
                 // Vai trò
-                const Text(
-                  'Developer / UI Designer',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                Text(
+                  lang("role", "Developer/UI Designer"),
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
 
                 const Divider(height: 40),
 
                 // Mô tả ngắn
-                const Text(
-                  'Xin chào! Tôi là Giang, hiện đang phát triển ứng dụng '
-                  'FlowUp — một trình phát nhạc đơn giản, hiện đại và dễ sử dụng.',
+                Text(
+                  lang(
+                    "description",
+                    "Hi! I am Giang, currently developing the app\nFlowUp — a simple, modern and easy-to-use music player.",
+                  ),
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, height: 1.5),
+                  style: const TextStyle(fontSize: 15, height: 1.5),
                 ),
 
                 const SizedBox(height: 30),
