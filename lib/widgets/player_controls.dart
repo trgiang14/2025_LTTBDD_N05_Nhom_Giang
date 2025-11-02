@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
-class PlayerControls extends StatefulWidget {
-  const PlayerControls({super.key});
+class PlayerControls extends StatelessWidget {
+  final bool isPlaying;
+  final VoidCallback onPlayPause;
 
-  @override
-  State<PlayerControls> createState() => _PlayerControlsState();
-}
-
-class _PlayerControlsState extends State<PlayerControls> {
-  bool isPlaying = false;
-  bool isShuffle = false;
-  bool isRepeat = false;
+  const PlayerControls({
+    super.key,
+    required this.isPlaying,
+    required this.onPlayPause,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,37 +19,30 @@ class _PlayerControlsState extends State<PlayerControls> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              onPressed: () {
-                setState(() => isShuffle = !isShuffle);
-              },
-              icon: Icon(
-                Icons.shuffle,
-                color: isShuffle ? Colors.deepPurple : Colors.grey,
-              ),
+              onPressed: () {},
+              icon: Icon(Icons.shuffle, color: Colors.grey),
             ),
           ],
         ),
         const SizedBox(height: 12),
 
-        //play/pause + previous + next
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
               iconSize: 36,
-              icon: const Icon(Icons.skip_previous_rounded),
               onPressed: () {},
+              icon: const Icon(Icons.skip_previous_rounded),
             ),
+
             const SizedBox(width: 16),
+
             IconButton(
-              iconSize: 56,
+              onPressed: onPlayPause,
               icon: Icon(
                 isPlaying ? Icons.pause_circle : Icons.play_circle,
                 color: Colors.deepPurple,
               ),
-              onPressed: () {
-                setState(() => isPlaying = !isPlaying);
-              },
             ),
             const SizedBox(width: 16),
             IconButton(

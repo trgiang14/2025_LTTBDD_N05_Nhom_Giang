@@ -18,7 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
         "artist": "One Direction",
         "rating": 4.5,
         "tag": "Love",
-        "image": "images/pexels-julias-torten-und-tortchen-434418-31001122.jpg",
+        "url": "assets/audios/Night Changes.mp3",
+        "image":
+            "assets/images/pexels-julias-torten-und-tortchen-434418-31001122.jpg",
       },
       {
         "title": "Night Changes",
