@@ -1,107 +1,22 @@
 import 'package:flow_up/widgets/player_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '/widgets/song_progress_bar.dart';
-import 'package:audioplayers/audioplayers.dart';
+import '/services/music_service.dart';
 
 class PlayerScreen extends StatefulWidget {
-  final List<Map<String, dynamic>>? song;
-
-  const PlayerScreen({super.key, this.song});
+  const PlayerScreen({super.key});
 
   @override
   State<PlayerScreen> createState() => _PlayerScreenState();
 }
 
 class _PlayerScreenState extends State<PlayerScreen> {
-  late AudioPlayer _audioPlayer;
-  bool _isPlaying = false;
-  Duration _currentPosition = Duration.zero;
-  Duration _totalDuration = Duration.zero;
-
-  @override
-  //Khởi tạo player khi màn hình được tạo
-  void initState() {
-    super.initState();
-    _audioPlayer = AudioPlayer();
-    _initializePlayer();
-  }
-
-  //Hàm khởi tạo player và lắng nghe sự kiện
-  void _initializePlayer() {
-    //lắng nghe trạng thái phát
-    _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      if (mounted) {
-        setState(() {
-          _isPlaying = state == PlayerState.playing;
-        });
-      }
-    });
-
-    //lắng nghe vị trí hiện tại
-    _audioPlayer.onPositionChanged.listen((Duration position) {
-      if (mounted) {
-        setState(() {
-          _currentPosition = position;
-        });
-      }
-    });
-
-    //lắng nghe tổng thời gian
-    _audioPlayer.onDurationChanged.listen((Duration duration) {
-      if (mounted) {
-        setState(() {
-          _totalDuration = duration;
-        });
-      }
-    });
-
-    //Phát nhạc nếu có URL
-    if (widget.song != null && widget.song!.isNotEmpty) {
-      final url = widget.song![0]['url'] ?? '';
-      if (url.isNotEmpty) {
-        _playSong(url);
-      }
-    }
-  }
-
-  //Hàm phát nhạc
-  Future<void> _playSong(String url) async {
-    try {
-      if (url.startsWith('assets//')) {
-        await _audioPlayer.play(AssetSource(url.replaceFirst('asset://', '')));
-      } else if (url.startsWith('http')) {
-        await _audioPlayer.play(UrlSource(url));
-      } else {
-        await _audioPlayer.play(DeviceFileSource(url));
-      }
-    } catch (e) {
-      print('Error playing song: $e');
-    }
-  }
-
-  //Hàm điều khiển play/pause
-  void _togglePlayPause() {
-    if (_isPlaying) {
-      _audioPlayer.pause();
-    } else {
-      _audioPlayer.resume();
-    }
-  }
-
-  //Hàm tua nhạc
-  void _seekTo(int seconds) {
-    _audioPlayer.seek(Duration(seconds: seconds));
-  }
-
-  //Giải phóng player khi màn hình đóng
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final musicService = Provider.of<MusicService>(context);
+    final currentSong = musicService.currentSong;
+
     return Scaffold(
       backgroundColor: Colors.deepPurple.shade50,
       appBar: AppBar(
@@ -112,10 +27,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
       ),
 
       body: SafeArea(
@@ -137,9 +49,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       offset: const Offset(0, 10),
                     ),
                   ],
-                  image: const DecorationImage(
+                  image: DecorationImage(
                     image: AssetImage(
-                      'images/pexels-julias-torten-und-tortchen-434418-31001122.jpg',
+                      currentSong?['image'] ??
+                          'images/pexels-julias-torten-und-tortchen-434418-31001122.jpg',
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -147,28 +60,39 @@ class _PlayerScreenState extends State<PlayerScreen> {
               ),
               const SizedBox(height: 24),
               //Tên bài hát+ca sĩ
-              const Text(
-                'Night Changes',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              Text(
+                currentSong?['title'] ?? 'Unknown',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),
               Text(
-                'One Dỉrection',
+                currentSong?['artist'] ?? 'Unknown',
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
               ),
               const SizedBox(height: 24),
               //Thanh tiến trình
               SongProgressBar(
-                current: _currentPosition.inSeconds,
-                total: _totalDuration.inSeconds,
-                onSeek: _seekTo,
+                current: musicService.currentPosition.inSeconds,
+                total: musicService.totalDuration.inSeconds,
+                onSeek: (seconds) => musicService.seekTo(seconds),
               ),
               const SizedBox(height: 20),
 
               //Nút điều khiển
               PlayerControls(
-                isPlaying: _isPlaying,
-                onPlayPause: _togglePlayPause,
+                isPlaying: musicService.isPlaying,
+                onPlayPause: () => musicService.togglePlayPause(),
+                onNext:
+                    musicService.currentIndex < musicService.playlist.length - 1
+                    ? () => musicService.playNext()
+                    : null,
+                onPrevious: musicService.currentIndex > 0
+                    ? () => musicService.playPrevious()
+                    : null,
               ),
             ],
           ),

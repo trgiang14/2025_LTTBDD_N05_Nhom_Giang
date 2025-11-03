@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'screens/player_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/about_screen.dart';
 import 'package:flow_up/lang.dart';
+import 'package:flow_up/services/music_service.dart';
 
 void main() {
-  runApp(FlowApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => MusicService()..initialize(),
+      child: FlowApp(),
+    ),
+  );
 }
 
 class FlowApp extends StatefulWidget {

@@ -1,6 +1,8 @@
 import 'package:flow_up/screens/player_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flow_up/lang.dart';
+import '../services/music_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,18 +25,20 @@ class _HomeScreenState extends State<HomeScreen> {
             "assets/images/pexels-julias-torten-und-tortchen-434418-31001122.jpg",
       },
       {
-        "title": "Night Changes",
-        "artist": "One Direction",
+        "title": "Alive",
+        "artist": "Cristina Vee",
         "rating": 4.5,
-        "tag": "Love",
-        "image": "images/pexels-julias-torten-und-tortchen-434418-31001122.jpg",
+        "tag": "Unknown",
+        "url": "assets/audios/塞壬唱片 - A WORLD FAMILIARLY Alive.mp3",
+        "image": "assets/images/7d9ab6167720f8f4b982c83fbe89ce0b.jpg",
       },
       {
-        "title": "Night Changes",
-        "artist": "One Direction",
+        "title": "Still the same",
+        "artist": "Adam Gubman & Chad Reisser",
         "rating": 4.5,
-        "tag": "Love",
-        "image": "images/pexels-julias-torten-und-tortchen-434418-31001122.jpg",
+        "tag": "Unknown",
+        "url": "assets/audios/塞壬唱片 - A WORLD FAMILIARLY Still the save.wav",
+        "image": "assets/images/94db0d0ca72b66977653601d53447fcc.jpg",
       },
     ];
     return Scaffold(
@@ -117,15 +121,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
             //Danh sách bài hát
             Column(
-              children: songs.map((song) {
+              children: songs.asMap().entries.map((entry) {
+                final index = entry.key;
+                final song = entry.value;
+
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(
+                    final musicService = Provider.of<MusicService>(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => PlayerScreen(song: songs),
-                      ),
+                      listen: false,
                     );
+                    musicService.playSong(song, playlist: songs, index: index);
+                    DefaultTabController.of(context)?.animateTo(1);
                   },
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 16),

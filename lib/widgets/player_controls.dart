@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class PlayerControls extends StatelessWidget {
   final bool isPlaying;
   final VoidCallback onPlayPause;
+  final VoidCallback? onNext;
+  final VoidCallback? onPrevious;
 
   const PlayerControls({
     super.key,
     required this.isPlaying,
     required this.onPlayPause,
+    this.onNext,
+    this.onPrevious,
   });
 
   @override
