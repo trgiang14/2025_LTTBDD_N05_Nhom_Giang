@@ -35,7 +35,7 @@ class PlayerControls extends StatelessWidget {
           children: [
             IconButton(
               iconSize: 36,
-              onPressed: () {},
+              onPressed: onPrevious,
               icon: const Icon(Icons.skip_previous_rounded),
             ),
 
@@ -50,7 +50,7 @@ class PlayerControls extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             IconButton(
-              onPressed: () {},
+              onPressed: onNext,
               icon: const Icon(Icons.skip_next_rounded),
               iconSize: 36,
             ),
