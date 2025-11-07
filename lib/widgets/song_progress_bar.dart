@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
 class SongProgressBar extends StatelessWidget {
   final int current;
@@ -14,35 +15,30 @@ class SongProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = total > 0 ? current / total : 0.0;
-
-    String formatTime(int seconds) {
-      final minutes = (seconds ~/ 60).toString().padLeft(1, '0');
-      final secs = (seconds % 60).toString().padLeft(2, '0');
-      return '$minutes:$secs';
-    }
-
-    return Column(
-      children: [
-        Slider(
-          value: progress.clamp(0.0, 1.0),
-          onChanged: onSeek != null
-              ? (value) {
-                  final newPosition = (value * total).round();
-                  onSeek!(newPosition);
-                }
-              : null,
-          activeColor: Colors.deepPurple,
-          inactiveColor: Colors.deepPurple.shade100,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ProgressBar(
+        progress: Duration(seconds: current),
+        total: Duration(seconds: total),
+        buffered: Duration(seconds: total),
+        onSeek: onSeek != null
+            ? (duration) {
+                onSeek!(duration.inSeconds);
+              }
+            : null,
+        // Tùy chỉnh màu sắc
+        progressBarColor: Colors.deepPurple,
+        baseBarColor: Colors.deepPurple.shade100,
+        bufferedBarColor: Colors.deepPurple.shade50,
+        thumbColor: Colors.deepPurple,
+        barHeight: 4.0,
+        thumbRadius: 6.0,
+        // Tùy chỉnh text
+        timeLabelTextStyle: TextStyle(
+          color: Colors.grey.shade700,
+          fontSize: 12,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(formatTime(current)), Text(formatTime(total))],
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
