@@ -75,10 +75,24 @@ class _PlayerScreenState extends State<PlayerScreen> {
               ),
               const SizedBox(height: 24),
               //Thanh tiến trình
-              SongProgressBar(
-                current: musicService.currentPosition.inSeconds,
-                total: musicService.totalDuration.inSeconds,
-                onSeek: (seconds) => musicService.seekTo(seconds),
+              StreamBuilder<Duration?>(
+                stream: musicService.durationStream,
+                builder: (context, durationSnap) {
+                  final totalSeconds =
+                      (durationSnap.data ?? Duration.zero).inSeconds;
+                  return StreamBuilder<Duration>(
+                    stream: musicService.positionStream,
+                    builder: (context, positionSnap) {
+                      final currentSeconds =
+                          (positionSnap.data ?? Duration.zero).inSeconds;
+                      return SongProgressBar(
+                        current: currentSeconds,
+                        total: totalSeconds,
+                        onSeek: (seconds) => musicService.seekTo(seconds),
+                      );
+                    },
+                  );
+                },
               ),
               const SizedBox(height: 20),
 
