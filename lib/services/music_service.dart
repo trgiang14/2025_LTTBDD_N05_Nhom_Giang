@@ -14,9 +14,6 @@ class MusicService extends ChangeNotifier {
   List<Map<String, dynamic>> _playlist = [];
   int _currentIndex = 0;
 
-  // Audio source tổng
-  ConcatenatingAudioSource? _audioSource;
-
   // Getters
   bool get isPlaying => _audioPlayer.playing;
   Duration get currentPosition => _audioPlayer.position;
@@ -32,6 +29,9 @@ class MusicService extends ChangeNotifier {
 
   void initialize() {
     _audioPlayer.playingStream.listen((_) => notifyListeners());
+    _audioPlayer.positionStream.listen((_) => notifyListeners());
+    _audioPlayer.durationStream.listen((_) => notifyListeners());
+
     _audioPlayer.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
         playNext();
@@ -39,92 +39,88 @@ class MusicService extends ChangeNotifier {
     });
   }
 
-  // Chuẩn bị playlist để load sẵn các bài
-  Future<void> setPlaylist(
-    List<Map<String, dynamic>> playlist, {
-    int startIndex = 0,
-  }) async {
-    _playlist = playlist;
-    _currentIndex = startIndex;
-
-    final sources = playlist.map((song) {
-      final url = song['url'] ?? '';
-      if (url.startsWith('assets/')) {
-        return AudioSource.asset(url);
-      } else if (url.startsWith('asset://')) {
-        return AudioSource.asset(url.replaceFirst('asset://', 'assets/'));
-      } else if (url.startsWith('http')) {
-        return AudioSource.uri(Uri.parse(url));
-      } else {
-        return AudioSource.file(url);
-      }
-    }).toList();
-
-    _audioSource = ConcatenatingAudioSource(children: sources);
-
-    await _audioPlayer.setAudioSource(
-      _audioSource!,
-      initialIndex: startIndex,
-      preload: true,
-    );
-
-    _currentSong = _playlist[startIndex];
-    notifyListeners();
-  }
-
-  // Phát bài
   Future<void> playSong(
     Map<String, dynamic> song, {
     List<Map<String, dynamic>>? playlist,
     int? index,
   }) async {
-    if (playlist != null) {
-      await setPlaylist(playlist, startIndex: index ?? 0);
-    } else if (_audioSource == null) {
-      await setPlaylist([song]);
-    }
+    try {
+      // Lưu playlist và index
+      if (playlist != null) {
+        _playlist = playlist;
+        _currentIndex = index ?? 0;
+      }
 
-    await _audioPlayer.play();
-    _currentSong = song;
-    notifyListeners();
+      _currentSong = song;
+
+      final url = song['url'] ?? '';
+      final currentUrl = _audioPlayer.audioSource?.toString() ?? '';
+
+      if (!currentUrl.contains(url)) {
+        print('🎵 Loading: $url');
+
+        if (url.startsWith('assets/')) {
+          await _audioPlayer.setAsset(url);
+        } else if (url.startsWith('asset://')) {
+          await _audioPlayer.setAsset(url.replaceFirst('asset://', 'assets/'));
+        } else if (url.startsWith('http://') || url.startsWith('https://')) {
+          await _audioPlayer.setUrl(url);
+        } else if (url.isNotEmpty) {
+          await _audioPlayer.setFilePath(url);
+        }
+
+        print('Loaded, now playing...');
+      }
+
+      // Phát ngay
+      await _audioPlayer.play();
+
+      notifyListeners();
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   Future<void> togglePlayPause() async {
-    if (_audioPlayer.playing) {
-      await _audioPlayer.pause();
-    } else {
-      await _audioPlayer.play();
+    try {
+      if (_audioPlayer.playing) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.play();
+      }
+    } catch (e) {
+      print('togglePlayPause error: $e');
     }
   }
 
   // Tua nhạc
   Future<void> seekTo(int seconds) async {
-    final total = _audioPlayer.duration ?? Duration.zero;
-    if (total == Duration.zero) return;
-    final target = Duration(seconds: seconds.clamp(0, total.inSeconds));
-    await _audioPlayer.seek(target);
+    try {
+      final total = _audioPlayer.duration ?? Duration.zero;
+      if (total == Duration.zero) return;
+
+      final target = Duration(seconds: seconds.clamp(0, total.inSeconds));
+      await _audioPlayer.seek(target);
+    } catch (e) {
+      print('seekTo error: $e');
+    }
   }
 
-  // Chuyển bài
+  // Next: Load bài mới khi cần
   Future<void> playNext() async {
     if (_playlist.isEmpty) return;
     if (_currentIndex < _playlist.length - 1) {
       _currentIndex++;
-      await _audioPlayer.seekToNext();
-      await _audioPlayer.play();
-      _currentSong = _playlist[_currentIndex];
-      notifyListeners();
+      await playSong(_playlist[_currentIndex]);
     }
   }
 
+  // Previous: Load bài mới khi cần
   Future<void> playPrevious() async {
     if (_playlist.isEmpty) return;
     if (_currentIndex > 0) {
       _currentIndex--;
-      await _audioPlayer.seekToPrevious();
-      await _audioPlayer.play();
-      _currentSong = _playlist[_currentIndex];
-      notifyListeners();
+      await playSong(_playlist[_currentIndex]);
     }
   }
 
